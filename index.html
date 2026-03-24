@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>GPS App</title>
+</head>
+<body>
+  <h1>Locatia mea</h1>
+  <button onclick="getLocation()">Vezi GPS</button>
+  <p id="output"></p>
+
+  <script>
+    function getLocation() {
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          document.getElementById("output").innerText =
+            "Lat: " + pos.coords.latitude +
+            " | Lon: " + pos.coords.longitude;
+        },
+        (err) => {
+          alert("Eroare GPS");
+        }
+      );
+    }
+  </script>
+</body>
+</html>
