@@ -3,15 +3,16 @@ import {
   collection,
   addDoc,
   getDocs,
+  onSnapshot,
+  deleteDoc,
+  doc,
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-// Inițializare hartă
 const map = L.map("map").setView([46.57, 26.91], 13);
 let selectedPosition = null;
 map.on("click", function (e) {
   selectedPosition = [e.latlng.lat, e.latlng.lng];
 
-  // marker temporar (vizual)
   if (window.tempMarker) {
     map.removeLayer(window.tempMarker);
   }
@@ -33,23 +34,38 @@ const trafficIcon = L.icon({
   iconSize: [30, 30],
 });
 
-// OpenStreetMapaa
 L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
   attribution: "© OpenStreetMap",
 }).addTo(map);
 
 let currentPosition = null;
 
-// GPS
 navigator.geolocation.getCurrentPosition((pos) => {
   currentPosition = [pos.coords.latitude, pos.coords.longitude];
   map.setView(currentPosition, 15);
   L.circle(currentPosition, {
-    radius: 2000, // metri
+    radius: 2000,
     color: "blue",
     fillOpacity: 0.1,
   }).addTo(map);
-  loadReports();
+  listenReports();
+});
+navigator.geolocation.watchPosition((pos) => {
+  currentPosition = [pos.coords.latitude, pos.coords.longitude];
+
+  map.setView(currentPosition, 15);
+
+  if (radiusCircle) {
+    map.removeLayer(radiusCircle);
+  }
+
+  radiusCircle = L.circle(currentPosition, {
+    radius: 2000,
+    color: "blue",
+    fillOpacity: 0.1,
+  }).addTo(map);
+
+  listenReports();
 });
 
 window.addReport = async function () {
@@ -85,30 +101,46 @@ window.addReport = async function () {
   });
 
   alert("Eveniment adăugat!");
-  loadReports();
+  listenReports();
 };
 
-// Încarcă markers
-async function loadReports() {
-  const querySnapshot = await getDocs(collection(db, "reports"));
+function listenReports() {
+  onSnapshot(collection(db, "reports"), async (snapshot) => {
+    await cleanupOldReports(snapshot);
 
-  querySnapshot.forEach((doc) => {
-    const data = doc.data();
-
-    const distance = getDistance(
-      currentPosition[0],
-      currentPosition[1],
-      data.lat,
-      data.lng,
-    );
-
-    if (distance <= 2) {
-      L.marker([data.lat, data.lng], {
-        icon: getIcon(data.type),
-      })
-        .addTo(map)
-        .bindPopup(`${data.type} | ${distance.toFixed(2)} km`);
+    if (window.markers) {
+      window.markers.forEach((m) => map.removeLayer(m));
     }
+    window.markers = [];
+
+    snapshot.forEach((doc) => {
+      const data = doc.data();
+      const now = Date.now();
+      const age = now - data.timestamp;
+
+      if (age > 3600000) {
+        return;
+      }
+
+      const distance = getDistance(
+        currentPosition[0],
+        currentPosition[1],
+        data.lat,
+        data.lng,
+      );
+
+      if (distance <= 2) {
+        const marker = L.marker([data.lat, data.lng], {
+          icon: getIcon(data.type),
+        })
+          .addTo(map)
+          .bindPopup(
+            `${data.type} <br> ${distance.toFixed(2)} km <br> ${getTimeAgo(data.timestamp)} în urmă`,
+          );
+
+        window.markers.push(marker);
+      }
+    });
   });
 }
 function getIcon(type) {
@@ -124,7 +156,7 @@ function getIcon(type) {
   }
 }
 function getDistance(lat1, lon1, lat2, lon2) {
-  const R = 6371; // km
+  const R = 6371;
   const dLat = ((lat2 - lat1) * Math.PI) / 180;
   const dLon = ((lon2 - lon1) * Math.PI) / 180;
 
@@ -137,4 +169,33 @@ function getDistance(lat1, lon1, lat2, lon2) {
 
   const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
   return R * c;
+}
+function getTimeAgo(timestamp) {
+  const now = Date.now();
+  const diff = Math.floor((now - timestamp) / 1000);
+
+  if (diff < 60) return "acum";
+  if (diff < 3600) return Math.floor(diff / 60) + " min";
+
+  return Math.floor(diff / 3600) + " h";
+}
+async function cleanupOldReports(snapshot) {
+  const now = Date.now();
+
+  for (const docSnap of snapshot.docs) {
+    const data = docSnap.data();
+
+    if (!data.timestamp) continue;
+
+    const age = now - data.timestamp;
+    console.log(age);
+    if (age > 3600000) {
+      try {
+        await deleteDoc(doc(db, "reports", docSnap.id));
+        console.log("Șters:", docSnap.id);
+      } catch (e) {
+        console.error("Eroare ștergere:", e);
+      }
+    }
+  }
 }
