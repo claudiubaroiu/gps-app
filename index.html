@@ -2,6 +2,7 @@
 <html>
 <head>
   <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Traffic Reporter</title>
   <link rel="stylesheet" href="style.css" />
 
@@ -10,16 +11,18 @@
 </head>
 <body>
 
-<h2>Traffic Reporter</h2>
+<div class="header">
+  <h1>Traffic Reporter</h1>
 
-<div id="controls">
-  <select id="type">
-    <option value="accident">Accident</option>
-    <option value="radar">Radar</option>
-    <option value="traffic">Traffic</option>
-  </select>
+  <div class="controls">
+    <select id="type">
+      <option value="accident">Accident</option>
+      <option value="radar">Radar</option>
+      <option value="traffic">Trafic</option>
+    </select>
 
-  <button onclick="addReport()">Adaugă</button>
+    <button onclick="addReport()">Adaugă</button>
+  </div>
 </div>
 
 <div id="map"></div>

@@ -1,31 +1,73 @@
 body {
   margin: 0;
-  font-family: Arial;
+  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+  background: #f5f5f5;
+
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+/* HEADER */
+.header {
+  background: #1e293b;
+  color: white;
+  padding: 50px; /* MĂRIT */
+  box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+}
+
+.header h1 {
+  margin: 0;
+  font-size: 26px; /* MĂRIT */
   text-align: center;
 }
 
+/* CONTROLS */
+.controls {
+  display: flex;
+  gap: 10px;
+  margin-top: 15px;
+}
+
+/* SELECT */
+select {
+  flex: 1;
+  padding: 14px; /* MĂRIT */
+  font-size: 18px;
+  border-radius: 12px;
+  border: none;
+}
+
+/* BUTTON */
+button {
+  flex: 1;
+  padding: 14px; /* MĂRIT */
+  font-size: 18px;
+  background: #22c55e;
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-weight: bold;
+}
+
+/* MAP */
 #map {
-  height: 80vh;
+  flex: 1; /* 🔥 cheia */
   width: 100%;
 }
 
-#controls {
-  padding: 10px;
-}
-
-button {
-  padding: 10px;
-  font-size: 16px;
-}
-
-/* Responsive */
+/* MOBILE */
 @media (max-width: 600px) {
-  h2 {
-    font-size: 18px;
+  .header h1 {
+    font-size: 22px;
   }
 
-  button {
-    width: 100%;
-    margin-top: 5px;
+  .controls {
+    flex-direction: column;
+  }
+
+  select, button {
+    font-size: 18px;
+    padding: 16px;
   }
 }

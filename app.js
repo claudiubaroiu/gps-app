@@ -19,17 +19,17 @@ map.on("click", function (e) {
   window.tempMarker = L.marker(selectedPosition).addTo(map);
 });
 const accidentIcon = L.icon({
-  iconUrl: "https://cdn-icons-png.flaticon.com/512/565/565547.png",
+  iconUrl: "https://cdn-icons-png.flaticon.com/128/1476/1476799.png",
   iconSize: [30, 30],
 });
 
 const radarIcon = L.icon({
-  iconUrl: "https://cdn-icons-png.flaticon.com/512/149/149995.png",
+  iconUrl: "https://cdn-icons-png.flaticon.com/128/5600/5600529.png",
   iconSize: [30, 30],
 });
 
 const trafficIcon = L.icon({
-  iconUrl: "https://cdn-icons-png.flaticon.com/512/854/854878.png",
+  iconUrl: "https://cdn-icons-png.flaticon.com/128/2569/2569846.png",
   iconSize: [30, 30],
 });
 
