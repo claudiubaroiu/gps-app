@@ -1,0 +1,31 @@
+body {
+  margin: 0;
+  font-family: Arial;
+  text-align: center;
+}
+
+#map {
+  height: 80vh;
+  width: 100%;
+}
+
+#controls {
+  padding: 10px;
+}
+
+button {
+  padding: 10px;
+  font-size: 16px;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  h2 {
+    font-size: 18px;
+  }
+
+  button {
+    width: 100%;
+    margin-top: 5px;
+  }
+}

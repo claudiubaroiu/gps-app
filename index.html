@@ -1,26 +1,32 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>GPS App</title>
+  <meta charset="UTF-8" />
+  <title>Traffic Reporter</title>
+  <link rel="stylesheet" href="style.css" />
+
+  <!-- Leaflet -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
 </head>
 <body>
-  <h1>Locatia mea</h1>
-  <button onclick="getLocation()">Vezi GPS</button>
-  <p id="output"></p>
 
-  <script>
-    function getLocation() {
-      navigator.geolocation.getCurrentPosition(
-        (pos) => {
-          document.getElementById("output").innerText =
-            "Lat: " + pos.coords.latitude +
-            " | Lon: " + pos.coords.longitude;
-        },
-        (err) => {
-          alert("Eroare GPS");
-        }
-      );
-    }
-  </script>
+<h2>Traffic Reporter</h2>
+
+<div id="controls">
+  <select id="type">
+    <option value="accident">Accident</option>
+    <option value="radar">Radar</option>
+    <option value="traffic">Traffic</option>
+  </select>
+
+  <button onclick="addReport()">Adaugă</button>
+</div>
+
+<div id="map"></div>
+
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+<script type="module" src="firebase.js"></script>
+<script type="module" src="app.js"></script>
+
 </body>
 </html>
