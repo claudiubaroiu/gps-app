@@ -71,3 +71,16 @@ button {
     padding: 16px;
   }
 }
+#gpsData {
+    background: #1e293b;
+  padding: 10px;
+  font-size: 14px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+#gpsData p {
+  margin: 5px;
+}

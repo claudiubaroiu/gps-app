@@ -10,6 +10,12 @@ import {
 
 const map = L.map("map").setView([46.57, 26.91], 13);
 let selectedPosition = null;
+const userIcon = L.icon({
+  iconUrl: "https://cdn-icons-png.flaticon.com/512/64/64113.png",
+  iconSize: [45, 45],
+});
+
+let userMarker = null;
 map.on("click", function (e) {
   selectedPosition = [e.latlng.lat, e.latlng.lng];
 
@@ -46,15 +52,28 @@ navigator.geolocation.getCurrentPosition((pos) => {
   L.circle(currentPosition, {
     radius: 2000,
     color: "blue",
-    fillOpacity: 0.1,
+    fillOpacity: 0,
   }).addTo(map);
   listenReports();
 });
 navigator.geolocation.watchPosition((pos) => {
   currentPosition = [pos.coords.latitude, pos.coords.longitude];
 
+  document.getElementById("gpsData").innerHTML = `
+    <p>Lat: ${pos.coords.latitude.toFixed(5)}</p>
+    <p>Lng: ${pos.coords.longitude.toFixed(5)}</p>
+    <p>Alt: ${pos.coords.altitude ? pos.coords.altitude.toFixed(1) + " m" : "N/A"}</p>
+    <p>Viteză: ${pos.coords.speed ? (pos.coords.speed * 3.6).toFixed(1) + " km/h" : "0 km/h"}</p>
+    <p>Data: ${new Date(pos.timestamp).toLocaleDateString()}</p>
+  `;
   map.setView(currentPosition, 15);
+  userMarker = L.marker(currentPosition, { icon: userIcon }).addTo(map);
 
+  if (userMarker) {
+    userMarker.setLatLng(currentPosition); // mută marker-ul
+  } else {
+    userMarker = L.marker(currentPosition).addTo(map);
+  }
   if (radiusCircle) {
     map.removeLayer(radiusCircle);
   }
@@ -62,7 +81,7 @@ navigator.geolocation.watchPosition((pos) => {
   radiusCircle = L.circle(currentPosition, {
     radius: 2000,
     color: "blue",
-    fillOpacity: 0.1,
+    fillOpacity: 0.0,
   }).addTo(map);
 
   listenReports();
