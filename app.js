@@ -9,10 +9,12 @@ import {
 
 const map = L.map("map").setView([46.57, 26.91], 13);
 let selectedPosition = null;
+let radiusCircle = null;
 const userIcon = L.icon({
   iconUrl: "https://cdn-icons-png.flaticon.com/512/64/64113.png",
   iconSize: [45, 45],
 });
+let reportsListening = false;
 
 let userMarker = null;
 map.on("click", function (e) {
@@ -63,17 +65,17 @@ navigator.geolocation.watchPosition((pos) => {
     <p>Data: ${new Date(pos.timestamp).toLocaleDateString()}</p>
   `;
 
-  // if (radiusCircle) {
-  //   map.removeLayer(radiusCircle);
-  // }
+  if (radiusCircle) {
+    map.removeLayer(radiusCircle);
+  }
   radiusCircle = L.circle(currentPosition, {
     radius: 2000,
     color: "blue",
     fillOpacity: 0.0,
   }).addTo(map);
-
-  listenReports();
 });
+
+listenReports();
 
 window.addReport = async function () {
   if (!selectedPosition) {
@@ -108,7 +110,6 @@ window.addReport = async function () {
   });
 
   alert("Eveniment adăugat!");
-  listenReports();
 };
 
 function listenReports() {
@@ -126,6 +127,15 @@ function listenReports() {
       const age = now - data.timestamp;
 
       if (age > 3600000) {
+        return;
+      }
+      if (!currentPosition) {
+        const marker = L.marker([data.lat, data.lng], {
+          icon: getIcon(data.type),
+        })
+          .addTo(map)
+          .bindPopup(`${data.type} <br> ${getTimeAgo(data.timestamp)} în urmă`);
+        window.markers.push(marker);
         return;
       }
 
