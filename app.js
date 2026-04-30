@@ -2,7 +2,6 @@ import { db } from "./firebase.js";
 import {
   collection,
   addDoc,
-  getDocs,
   onSnapshot,
   deleteDoc,
   doc,
@@ -46,18 +45,15 @@ L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
 
 let currentPosition = null;
 
-navigator.geolocation.getCurrentPosition((pos) => {
-  currentPosition = [pos.coords.latitude, pos.coords.longitude];
-  map.setView(currentPosition, 15);
-  L.circle(currentPosition, {
-    radius: 2000,
-    color: "blue",
-    fillOpacity: 0,
-  }).addTo(map);
-  listenReports();
-});
 navigator.geolocation.watchPosition((pos) => {
   currentPosition = [pos.coords.latitude, pos.coords.longitude];
+  map.setView(currentPosition, 15);
+
+  if (userMarker) {
+    userMarker.setLatLng(currentPosition);
+  } else {
+    userMarker = L.marker(currentPosition, { icon: userIcon }).addTo(map);
+  }
 
   document.getElementById("gpsData").innerHTML = `
     <p>Lat: ${pos.coords.latitude.toFixed(5)}</p>
@@ -66,18 +62,10 @@ navigator.geolocation.watchPosition((pos) => {
     <p>Viteză: ${pos.coords.speed ? (pos.coords.speed * 3.6).toFixed(1) + " km/h" : "0 km/h"}</p>
     <p>Data: ${new Date(pos.timestamp).toLocaleDateString()}</p>
   `;
-  map.setView(currentPosition, 15);
-  userMarker = L.marker(currentPosition, { icon: userIcon }).addTo(map);
 
-  if (userMarker) {
-    userMarker.setLatLng(currentPosition); // mută marker-ul
-  } else {
-    userMarker = L.marker(currentPosition).addTo(map);
-  }
-  if (radiusCircle) {
-    map.removeLayer(radiusCircle);
-  }
-
+  // if (radiusCircle) {
+  //   map.removeLayer(radiusCircle);
+  // }
   radiusCircle = L.circle(currentPosition, {
     radius: 2000,
     color: "blue",
