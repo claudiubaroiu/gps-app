@@ -7,6 +7,13 @@ import {
   doc,
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
+if ("serviceWorker" in navigator) {
+  navigator.serviceWorker
+    .register("/sw.js")
+    .then(() => console.log("Service Worker înregistrat"))
+    .catch((err) => console.log("Eroare:", err));
+}
+
 const map = L.map("map").setView([46.57, 26.91], 13);
 let selectedPosition = null;
 let radiusCircle = null;
