@@ -2,13 +2,15 @@
   "name": "GPS-App",
   "short_name": "GPS",
   "description": "Aplicatie GPS personala",
-  "start_url": "/",
+  "start_url": ".",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#000000",
+  "orientation": "portrait",
+
   "icons": [
     {
-      "src": "/icons/iconApp.png",
+      "src": "icons/iconApp.png",
       "sizes": "192x192 512x512",
       "type": "image/png",
       "purpose": "any maskable"
