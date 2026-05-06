@@ -5,9 +5,10 @@
   <meta name="theme-color" content="#000000">
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Aplicatie GPS personala">
+  <link rel="apple-touch-icon" href="/icons/icon.png">
   <title>Traffic Reporter</title>
   <link rel="stylesheet" href="style.css" />
-
   <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
 </head>
 <body>
@@ -39,6 +40,13 @@
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 <script type="module" src="firebase.js"></script>
 <script type="module" src="app.js"></script>
-
+<script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/sw.js')
+        .then(() => console.log('Service Worker înregistrat'))
+        .catch(err => console.log('Eroare:', err));
+    }
+  </script>
+</body>
 </body>
 </html>

@@ -1,3 +1,24 @@
+const CACHE_NAME = "gps-app-v1";
+const urlsToCache = [
+  "/",
+  "/index.html",
+  "/style.css",
+  "/app.js",
+  "/icons/iconApp.png",
+];
+
+self.addEventListener("install", function (event) {
+  event.waitUntil(
+    caches.open(CACHE_NAME).then(function (cache) {
+      return cache.addAll(urlsToCache);
+    }),
+  );
+});
+
 self.addEventListener("fetch", function (event) {
-  event.respondWith(fetch(event.request));
+  event.respondWith(
+    caches.match(event.request).then(function (response) {
+      return response || fetch(event.request);
+    }),
+  );
 });
